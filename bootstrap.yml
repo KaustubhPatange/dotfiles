@@ -9,29 +9,18 @@
 
   # ----------- Setup zsh -----------
 
-  - name: Check zsh already installed
-    command: which zsh
-    register: zsh_check
-    ignore_errors: true
-
   - name: Install zsh
     ansible.builtin.package:
       name: zsh
       state: present
 
-  - name: Check current shell
-    ansible.builtin.command: echo $SHELL
-    register: current_shell
+  - name: Change default shell to zsh
+    ansible.builtin.command: chsh -s /usr/bin/zsh
 
-  - name: Change default shell to Zsh
-    ansible.builtin.shell: |
-      chsh -s $(which zsh)
-    when: current_shell.stdout != '/usr/bin/zsh'
-
-  - name: Create or update .zshrc
-    ansible.builtin.copy:
-      dest: ~/.zshrc
-      content: ""
+  - name: Create .zshrc if not exist
+    ansible.builtin.file:
+      path: ~/.zshrc
+      state: touch
 
   # ----------- Setup git -----------
 
