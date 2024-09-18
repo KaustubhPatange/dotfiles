@@ -1,0 +1,42 @@
+- name: Install required alacritty dependencies
+  become: yes
+  ansible.builtin.apt:
+    name:
+      - cmake
+      - pkg-config
+      - libfreetype6-dev
+      - libfontconfig1-dev
+      - libxcb-xfixes0-dev
+      - libxkbcommon-dev
+      - python3
+    state: present
+
+- name: Build alacritty with cargo
+  become: yes
+  shell: |
+    mkdir -p /usr/share/icons
+    cp /opt/alacritty/extra/logo/compat/alacritty-term.png /usr/share/icons/Alacritty.png
+
+    . $HOME/.cargo/env
+    cd /opt/alacritty
+    mkdir -p /tmp/alacritty
+    CARGO_TARGET_DIR=/tmp/alacritty cargo build --release
+    ls /tmp/alacritty
+    mv /tmp/alacritty/release/alacritty /usr/local/bin/alacritty
+
+  # ----------- Create desktop entry -----------
+
+- name: Create desktop entry for Alacritty
+  ansible.builtin.copy:
+    dest: /usr/share/applications/Alacritty.desktop
+    content: |
+      [Desktop Entry]
+      Type=Application
+      TryExec=alacritty
+      Exec=/usr/local/bin/alacritty
+      Icon=/usr/share/icons/Alacritty.png
+      Terminal=false
+      Categories=System;TerminalEmulator;
+      Name=Alacritty
+      GenericName=Terminal
+      Comment=A fast, cross-platform, OpenGL terminal emulator

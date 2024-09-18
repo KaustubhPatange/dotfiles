@@ -1,0 +1,60 @@
+- name: Bootstrap development environment
+  hosts: localhost
+
+  tasks:
+
+  # ----------- Install git -----------
+
+  - name: Install git
+    become: yes
+    ansible.builtin.apt:
+      name:
+        - git
+        - curl
+      state: present
+    when: ansible_facts['os_family'] == "Debian"
+
+  - name: Check if Homebrew is installed
+    ansible.builtin.command: brew --version
+    register: brew_installed
+    ignore_errors: yes
+    when: ansible_facts['os_family'] == "Darwin"
+
+  - name: Install Homebrew on macOS if not present
+    ansible.builtin.shell: |
+      /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    when: brew_installed.rc != 0 and ansible_facts['os_family'] == "Darwin"
+    when: ansible_facts['os_family'] == "Darwin"
+
+  - name: Install Git using Homebrew
+    ansible.builtin.homebrew:
+      name: git
+      state: present
+    when: ansible_facts['os_family'] == "Darwin"
+
+  # ----------- Install rustup -----------
+
+  - name: Install rustup
+    become: yes
+    ansible.builtin.shell: |
+      curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+
+  # ----------- Clone and install alacritty terminal -----------
+
+  - name: Check Alacritty if already installed
+    command: which alacritty
+    register: alacritty_check
+    ignore_errors: true
+
+  - name: Setup Alacritty 0.14.0 repo
+    become: yes
+    ansible.builtin.git:
+      repo: https://github.com/alacritty/alacritty.git
+      dest: /opt/alacritty
+      version: "d021a7b6"
+    when: alacritty_check.rc != 0
+
+  - name: Install alacritty
+    include_tasks: scripts/debian/alacritty.yaml
+    when: ansible_facts['os_family'] == "Debian"
+    when: alacritty_check.rc != 0
