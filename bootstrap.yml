@@ -85,6 +85,43 @@
       line: 'export PATH="$HOME/.cargo/bin:$PATH"'
       state: present
 
+  # ----------- Setup oh-my-zsh and p10k theme -----------
+
+  - name: Check if oh-my-zsh already installed
+    stat:
+      path: ~/.oh-my-zsh
+    register: zsh_check
+
+  - name: Install oh-my-zsh
+    ansible.builtin.shell: |
+      sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    args:
+      executable: /bin/sh
+    when: not zsh_check.stat.exists
+
+  - name: Clone the p10k theme
+    ansible.builtin.git:
+      repo: https://github.com/romkatv/powerlevel10k.git
+      dest: ~/.oh-my-zsh/custom/themes/powerlevel10k
+      depth: 1
+
+  - name: Copy p10k.zsh config
+    ansible.builtin.copy:
+      src: "configs/common/p10k.zsh"
+      dest: "~/.p10k.zsh"
+      mode: '0664'
+
+  - name: Source pk10.zsh config in .zshrc
+    ansible.builtin.lineinfile:
+      path: ~/.zshrc
+      line: '[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh'
+      state: present
+
+  - name: Set p10k theme
+    ansible.builtin.shell: sed -i 's/^ZSH_THEME=".*"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' ~/.zshrc
+    args:
+      executable: /bin/zsh
+
   # ----------- Setup Alacritty terminal -----------
 
   - name: Check alacritty if already installed
