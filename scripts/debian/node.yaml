@@ -1,0 +1,18 @@
+- name: Add NodeSource APT repository for Node.js 18.x
+  ansible.builtin.apt_key:
+    url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+    state: present
+
+- name: Add Node.js 18.x repository
+  ansible.builtin.apt_repository:
+    repo: deb https://deb.nodesource.com/node_18.x {{ ansible_distribution_release }} main
+    state: present
+
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: yes
+
+- name: Install Node.js 18
+  ansible.builtin.apt:
+    name: nodejs
+    state: present

@@ -7,7 +7,7 @@
     set_fact:
       os_family: "{{ 'debian' if ansible_facts['os_family'] == 'Debian' else 'osx' if ansible_facts['os_family'] == 'Darwin' else 'common' }}"
 
-  # ----------- Setup zsh -----------
+  # ----------- Install zsh -----------
 
   - name: Install zsh
     ansible.builtin.package:
@@ -22,12 +22,7 @@
       path: ~/.zshrc
       state: touch
 
-  # ----------- Install fonts -----------
-
-  - name: Install Hack Nerd Fonts
-    include_tasks: "scripts/{{os_family}}/fonts.yaml"
-
-  # ----------- Setup git -----------
+  # ----------- Install git -----------
 
   - name: Install git
     become: yes
@@ -56,7 +51,37 @@
       state: present
     when: ansible_facts['os_family'] == "Darwin"
 
-  # ----------- Setup rust -----------
+  # ----------- Install Node 18 -----------
+
+  - name: Check node if already installed
+    ansible.builtin.shell: which node
+    register: node_check
+    ignore_errors: true
+
+  - name: Install Node 18
+    include_tasks: "scripts/{{os_family}}/node.yaml"
+    when: node_check.rc != 0
+
+  # ----------- Install Python3 -----------
+
+  - name: Check python if already installed
+    ansible.builtin.shell: which python3
+    register: python_check
+    ignore_errors: true
+
+  - name: Install Python 3.x
+    include_tasks: "scripts/{{os_family}}/python.yaml"
+    when: python_check.rc != 0
+
+  - name: Alias python -> python3 and pip -> pip3
+    ansible.builtin.blockinfile:
+      path: ~/.zshrc
+      block: |
+        alias python=python3
+        alias pip=pip3
+      state: present
+
+  # ----------- Install rust -----------
 
   - name: Check rust if already installed
     ansible.builtin.shell: which cargo
@@ -121,6 +146,11 @@
     ansible.builtin.shell: sed -i 's/^ZSH_THEME=".*"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' ~/.zshrc
     args:
       executable: /bin/zsh
+
+  # ----------- Setup Hack Nerd fonts -----------
+
+  - name: Install Hack Nerd Fonts
+    include_tasks: "scripts/{{os_family}}/fonts.yaml"
 
   # ----------- Setup Alacritty terminal -----------
 
