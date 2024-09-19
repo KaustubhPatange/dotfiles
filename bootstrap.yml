@@ -118,3 +118,31 @@
 
   # ----------- Setup tmux -----------
   
+  - name: Check tmux if already installed
+    ansible.builtin.shell: which tmux
+    register: tmux_check
+    ignore_errors: true
+
+  - name: Install tmux
+    package:
+      name: tmux
+      state: present
+    when: tmux_check.rc != 0
+
+  - name: Copy tmux config
+    ansible.builtin.copy:
+      src: "configs/common/tmux.conf"
+      dest: "~/.tmux.conf"
+      mode: '0664'
+
+  - name: Clone tpm repository
+    ansible.builtin.git:
+      repo: 'https://github.com/tmux-plugins/tpm.git'
+      dest: ~/.tmux/plugins/tpm
+    become: yes
+    when: tmux_check.rc != 0
+
+  - name: Install tpm plugins
+    become: yes
+    ansible.builtin.shell: "~/.tmux/plugins/tpm/bin/install_plugins"
+    when: tmux_check.rc != 0
