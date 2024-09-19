@@ -22,6 +22,11 @@
       path: ~/.zshrc
       state: touch
 
+  # ----------- Install fonts -----------
+
+  - name: Install Hack Nerd Fonts
+    include_tasks: "scripts/{{os_family}}/fonts.yaml"
+
   # ----------- Setup git -----------
 
   - name: Install git
