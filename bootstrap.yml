@@ -164,6 +164,7 @@
     ansible.builtin.git:
       repo: https://github.com/alacritty/alacritty.git
       dest: /opt/alacritty
+      depth: 1
       version: "d021a7b6"
     when: alacritty_check.rc != 0
 
@@ -213,3 +214,31 @@
     become: yes
     ansible.builtin.shell: "~/.tmux/plugins/tpm/bin/install_plugins"
     when: tmux_check.rc != 0
+
+  # ----------- Setup neovim -----------
+
+  - name: Check nvim if already installed
+    ansible.builtin.shell: which nvim
+    register: nvim_check
+    ignore_errors: true
+
+  - name: Install nvim
+    include_tasks: "scripts/{{os_family}}/nvim.yaml"
+    when: nvim_check.rc != 0
+
+  - name: Check if my config already exists
+    stat:
+      path: ~/.config/nvim/lua/kp
+    register: nvim_config_check
+
+  - name: Backup an already existing config
+    ansible.builtin.shell: mv ~/.config/nvim ~/.config/nvim-a-bak
+    ignore_errors: true
+    when: not nvim_config_check.stat.exists
+
+  - name: Clone nvim config
+    ansible.builtin.git:
+      repo: "https://github.com/KaustubhPatange/init.lua"
+      dest: ~/.config/nvim
+      version: "master"
+      update: true
