@@ -1,0 +1,35 @@
+- name: Custom zsh
+  ansible.builtin.blockinfile:
+    path: ~/.zshrc
+    block: |
+      # Backup existing cd command as built-in
+      function bcd() {
+          builtin cd "$@"
+      }
+
+      # Add a hook to cd command so that if during cd
+      # there is a file exists called .zshrc.local
+      # it will source it.
+      # Subsequently if cd'ed out then it will unload
+      # it by calling the destructor
+      function cd() {
+          if declare -f ZSH_DESTRUCTOR &>/dev/null; then
+              ZSH_DESTRUCTOR || true # ignore errors
+              unset -f ZSH_DESTRUCTOR
+          fi
+
+          builtin cd "$@" || return 1
+
+          if [ -f ".zshrc.local" ]; then
+              source ./.zshrc.local
+          fi
+      }
+
+      # If zsh shell started the directory where the
+      # .zshrc.local is present load it directly
+      if [ -f .zshrc.local ]; then
+          source .zshrc.local
+      fi
+    state: present
+    insertbefore: BOF
+    marker: "# {mark} CD HOOK"
