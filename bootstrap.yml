@@ -7,6 +7,44 @@
     set_fact:
       os_family: "{{ 'debian' if ansible_facts['os_family'] == 'Debian' else 'osx' if ansible_facts['os_family'] == 'Darwin' else 'common' }}"
 
+  # ----------- Install git -----------
+
+  - name: Install git
+    become: yes
+    ansible.builtin.apt:
+      name:
+        - git
+        - curl
+      state: present
+    when: ansible_facts['os_family'] == "Debian"
+
+  - name: Check if Homebrew is installed
+    ansible.builtin.command: brew --version
+    register: brew_installed
+    ignore_errors: yes
+    when: ansible_facts['os_family'] == "Darwin"
+
+  - name: Install Homebrew on macOS if not present
+    ansible.builtin.shell: |
+      /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    when: brew_installed.rc != 0 and ansible_facts['os_family'] == "Darwin"
+    when: ansible_facts['os_family'] == "Darwin"
+
+  - name: Install Git using Homebrew
+    ansible.builtin.homebrew:
+      name: git
+      state: present
+    when: ansible_facts['os_family'] == "Darwin"
+
+  - name: Copy global gitignore file
+    ansible.builtin.copy:
+      src: "configs/common/.gitignore_global"
+      dest: "~/.gitignore_global"
+      mode: '0664'
+
+  - name: Set global exclude file
+    ansible.builtin.command: git config --global core.excludesfile ~/.gitignore_global
+
   # ----------- Install zsh -----------
 
   - name: Install zsh
@@ -63,44 +101,6 @@
 
   - name: Load custom zsh configurations
     include_tasks: "scripts/common/zsh.yaml"
-
-  # ----------- Install git -----------
-
-  - name: Install git
-    become: yes
-    ansible.builtin.apt:
-      name:
-        - git
-        - curl
-      state: present
-    when: ansible_facts['os_family'] == "Debian"
-
-  - name: Check if Homebrew is installed
-    ansible.builtin.command: brew --version
-    register: brew_installed
-    ignore_errors: yes
-    when: ansible_facts['os_family'] == "Darwin"
-
-  - name: Install Homebrew on macOS if not present
-    ansible.builtin.shell: |
-      /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    when: brew_installed.rc != 0 and ansible_facts['os_family'] == "Darwin"
-    when: ansible_facts['os_family'] == "Darwin"
-
-  - name: Install Git using Homebrew
-    ansible.builtin.homebrew:
-      name: git
-      state: present
-    when: ansible_facts['os_family'] == "Darwin"
-
-  - name: Copy global gitignore file
-    ansible.builtin.copy:
-      src: "configs/common/.gitignore_global"
-      dest: "~/.gitignore_global"
-      mode: '0664'
-
-  - name: Set global exclude file
-    ansible.builtin.command: git config --global core.excludesfile ~/.gitignore_global
 
   # ----------- Install Node 18 -----------
 
@@ -258,3 +258,9 @@
       dest: ~/.config/nvim
       version: "master"
       update: true
+
+  - name: Add mason bin to PATH
+    ansible.builtin.lineinfile:
+      path: ~/.zshrc
+      line: 'export PATH="$HOME/.local/share/nvim/mason/bin:$PATH"'
+      state: present
