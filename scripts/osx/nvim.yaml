@@ -1,13 +1,20 @@
+- name: Check Xcode Command Line Tools
+  stat:
+    path: /usr/bin/xcode-select
+  register: xcode_check
+
+- name: Install Xcode Command Line Tools
+  command: xcode-select --install
+  when: xcode_check.rc != 0
+
 - name: Install required dependencies for nvim
   become: yes
-  ansible.builtin.apt:
+  ansible.builtin.homebrew:
     name:
-      - ninja-build
-      - gettext
+      - ninja
       - cmake
-      - unzip
+      - gettext
       - curl
-      - build-essential
     state: present
 
 - name: Build nvim
