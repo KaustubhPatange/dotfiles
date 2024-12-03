@@ -238,6 +238,15 @@
     register: nvim_check
     ignore_errors: true
 
+  - name: Clone nvim repository
+    become: yes
+    ansible.builtin.git:
+      repo: https://github.com/neovim/neovim
+      dest: /tmp/neovim
+      depth: 1
+      version: "release-0.9"
+    when: nvim_check.rc != 0
+
   - name: Install nvim
     include_tasks: "scripts/{{os_family}}/nvim.yaml"
     when: nvim_check.rc != 0

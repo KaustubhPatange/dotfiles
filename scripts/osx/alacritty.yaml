@@ -1,0 +1,29 @@
+- name: Install required alacritty dependencies
+  become: yes
+  ansible.builtin.homebrew:
+    name:
+      - cmake
+      - pkg-config
+      - fontconfig
+      - freetype
+    state: present
+
+- name: Build alacritty with cargo
+  become: yes
+  shell: |
+    source $HOME/.cargo/env
+    cd /opt/alacritty
+    mkdir -p /tmp/alacritty
+    CARGO_TARGET_DIR=/tmp/alacritty cargo build --release
+    ls /tmp/alacritty
+    mv /tmp/alacritty/release/alacritty /usr/local/bin/alacritty
+
+  # ----------- Create desktop entry -----------
+
+- name: Add Alacritty terminfo to the system
+  shell: |
+    tic -xe alacritty,alacritty-direct /tmp/alacritty/extra/alacritty.info
+
+- name: Install Alacritty desktop entry and icons for macOS
+  shell: |
+    cp -r /opt/alacritty/extra/osx/Alacritty.app /Applications/
