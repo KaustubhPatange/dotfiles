@@ -19,16 +19,15 @@
     when: ansible_facts['os_family'] == "Debian"
 
   - name: Check if Homebrew is installed
-    ansible.builtin.command: brew --version
-    register: brew_installed
-    ignore_errors: yes
+    ansible.builtin.shell: which brew
+    register: brew_check
+    ignore_errors: true
     when: ansible_facts['os_family'] == "Darwin"
 
   - name: Install Homebrew on macOS if not present
     ansible.builtin.shell: |
       /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    when: brew_installed.rc != 0 and ansible_facts['os_family'] == "Darwin"
-    when: ansible_facts['os_family'] == "Darwin"
+    when: brew_check.rc != 0 and ansible_facts['os_family'] == "Darwin"
 
   - name: Install Git using Homebrew
     ansible.builtin.homebrew:
@@ -47,13 +46,19 @@
 
   # ----------- Install zsh -----------
 
+  - name: Check if zsh is the default shell
+    ansible.builtin.shell: echo $SHELL
+    register: current_shell
+
   - name: Install zsh
     ansible.builtin.package:
       name: zsh
       state: present
+    when: "'/zsh' not in current_shell.stdout"
 
   - name: Change default shell to zsh
     ansible.builtin.command: chsh -s /usr/bin/zsh
+    when: "'/zsh' not in current_shell.stdout"
 
   - name: Create .zshrc if not exist
     ansible.builtin.file:
@@ -93,7 +98,12 @@
       state: present
 
   - name: Set p10k theme
-    ansible.builtin.shell: sed -i 's/^ZSH_THEME=".*"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' ~/.zshrc
+    ansible.builtin.shell: |
+      if [ "$(uname)" = "Darwin" ]; then
+        sed -i '' 's/^ZSH_THEME=".*"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' ~/.zshrc
+      else
+        sed -i 's/^ZSH_THEME=".*"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' ~/.zshrc
+      fi
     args:
       executable: /bin/zsh
 
@@ -143,13 +153,13 @@
       executable: /bin/zsh
 
   - name: Install rustup
-    become: yes
+    become: no
     ansible.builtin.shell: |
       curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
     when: cargo_check.rc != 0
 
   - name: Set rustup stable version
-    become: yes
+    become: no
     ansible.builtin.shell: |
       . $HOME/.cargo/env
       rustup override set stable
@@ -223,11 +233,9 @@
     ansible.builtin.git:
       repo: 'https://github.com/tmux-plugins/tpm.git'
       dest: ~/.tmux/plugins/tpm
-    become: yes
     when: tmux_check.rc != 0
 
   - name: Install tpm plugins
-    become: yes
     ansible.builtin.shell: "~/.tmux/plugins/tpm/bin/install_plugins"
     when: tmux_check.rc != 0
 

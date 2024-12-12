@@ -5,10 +5,9 @@
 
 - name: Install Xcode Command Line Tools
   command: xcode-select --install
-  when: xcode_check.rc != 0
+  when: not xcode_check.stat.exists
 
 - name: Install required dependencies for nvim
-  become: yes
   ansible.builtin.homebrew:
     name:
       - ninja

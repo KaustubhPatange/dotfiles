@@ -1,5 +1,4 @@
 - name: Install required alacritty dependencies
-  become: yes
   ansible.builtin.homebrew:
     name:
       - cmake
@@ -21,9 +20,11 @@
   # ----------- Create desktop entry -----------
 
 - name: Add Alacritty terminfo to the system
+  become: yes
   shell: |
-    tic -xe alacritty,alacritty-direct /tmp/alacritty/extra/alacritty.info
+    tic -xe alacritty,alacritty-direct /opt/alacritty/extra/alacritty.info
 
 - name: Install Alacritty desktop entry and icons for macOS
+  become: yes
   shell: |
     cp -r /opt/alacritty/extra/osx/Alacritty.app /Applications/
