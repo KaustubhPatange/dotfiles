@@ -266,3 +266,14 @@
       path: ~/.zshrc
       line: 'export PATH="$HOME/.local/share/nvim/mason/bin:$PATH"'
       state: present
+
+  # ----------- Install lazygit -----------
+
+  - name: Check lazygit if already installed
+    ansible.builtin.shell: which lazygit
+    register: lazygit_check 
+    ignore_errors: true
+
+  - name: Install lazygit
+    include_tasks: "scripts/{{os_family}}/lazygit.yaml"
+    when: lazygit_check.rc != 0
