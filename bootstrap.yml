@@ -27,7 +27,10 @@
   - name: Install Homebrew on macOS if not present
     ansible.builtin.shell: |
       /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    when: brew_check.rc != 0 and ansible_facts['os_family'] == "Darwin"
+    when:
+      - ansible_facts['os_family'] == "Darwin"
+      - brew_check is defined
+      - brew_check.rc is not defined or brew_check.rc != 0
 
   - name: Install Git using Homebrew
     ansible.builtin.homebrew:
@@ -281,3 +284,14 @@
       path: ~/.zshrc
       line: 'export PATH="$HOME/.local/share/nvim/mason/bin:$PATH"'
       state: present
+
+  # ----------- Install lazygit -----------
+
+  - name: Check lazygit if already installed
+    ansible.builtin.shell: which lazygit
+    register: lazygit_check 
+    ignore_errors: true
+
+  - name: Install lazygit
+    include_tasks: "scripts/{{os_family}}/lazygit.yaml"
+    when: lazygit_check.rc != 0
