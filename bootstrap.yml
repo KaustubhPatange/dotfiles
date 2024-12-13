@@ -27,8 +27,10 @@
   - name: Install Homebrew on macOS if not present
     ansible.builtin.shell: |
       /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    when: brew_installed.rc != 0 and ansible_facts['os_family'] == "Darwin"
-    when: ansible_facts['os_family'] == "Darwin"
+    when:
+      - ansible_facts['os_family'] == "Darwin"
+      - brew_check is defined
+      - brew_check.rc is not defined or brew_check.rc != 0
 
   - name: Install Git using Homebrew
     ansible.builtin.homebrew:
