@@ -1,18 +1,15 @@
 - name: ensure fonts directory
-  become: yes
   file:
     path: "~/Library/Fonts"
     state: directory
 
 - name: Hack exists
-  become: yes
   shell: "ls ~/Library/Fonts | grep HackNerd"
   register: hack_exists
   ignore_errors: yes
 
 - name: Download Hack
   when: hack_exists is failed
-  become: yes
   ansible.builtin.unarchive:
     src: https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Hack.zip
     dest: "~/Library/Fonts/"
