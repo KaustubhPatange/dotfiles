@@ -236,7 +236,8 @@
     ansible.builtin.git:
       repo: 'https://github.com/tmux-plugins/tpm.git'
       dest: ~/.tmux/plugins/tpm
-    when: tmux_check.rc != 0
+      version: "master"
+      update: true
 
   - name: Install tpm plugins
     ansible.builtin.shell: "~/.tmux/plugins/tpm/bin/install_plugins"
