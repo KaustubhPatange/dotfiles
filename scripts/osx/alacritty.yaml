@@ -8,13 +8,16 @@
     state: present
 
 - name: Build alacritty with cargo
-  become: yes
   shell: |
     source $HOME/.cargo/env
     cd /opt/alacritty
     mkdir -p /tmp/alacritty
     CARGO_TARGET_DIR=/tmp/alacritty cargo build --release
     ls /tmp/alacritty
+
+- name: Move alacritty to location
+  become: yes
+  shell: |
     mv /tmp/alacritty/release/alacritty /usr/local/bin/alacritty
 
   # ----------- Create desktop entry -----------
