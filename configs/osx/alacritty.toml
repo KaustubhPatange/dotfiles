@@ -1,8 +1,79 @@
 [window]
 startup_mode = "Fullscreen"
+option_as_alt = "OnlyLeft"
 
 [font.normal]
 family = "Hack Nerd Font"
 
 [mouse]
 hide_when_typing = true
+
+[[keyboard.bindings]]
+key = "Key1"
+mods = "Alt"
+  [keyboard.bindings.command]
+  program = "/opt/homebrew/bin/tmux"
+  args = [ "select-window", "-t", "1"]
+
+[[keyboard.bindings]]
+key = "Key2"
+mods = "Alt"
+  [keyboard.bindings.command]
+  program = "/opt/homebrew/bin/tmux"
+  args = [ "select-window", "-t", "2"]
+
+[[keyboard.bindings]]
+key = "Key3"
+mods = "Alt"
+  [keyboard.bindings.command]
+  program = "/opt/homebrew/bin/tmux"
+  args = [ "select-window", "-t", "3"]
+
+[[keyboard.bindings]]
+key = "Key4"
+mods = "Alt"
+  [keyboard.bindings.command]
+  program = "/opt/homebrew/bin/tmux"
+  args = [ "select-window", "-t", "4"]
+
+[[keyboard.bindings]]
+key = "Key5"
+mods = "Alt"
+  [keyboard.bindings.command]
+  program = "/opt/homebrew/bin/tmux"
+  args = [ "select-window", "-t", "5"]
+
+[[keyboard.bindings]]
+key = "Key6"
+mods = "Alt"
+  [keyboard.bindings.command]
+  program = "/opt/homebrew/bin/tmux"
+  args = [ "select-window", "-t", "6"]
+
+[[keyboard.bindings]]
+key = "Key7"
+mods = "Alt"
+  [keyboard.bindings.command]
+  program = "/opt/homebrew/bin/tmux"
+  args = [ "select-window", "-t", "7"]
+
+[[keyboard.bindings]]
+key = "Key8"
+mods = "Alt"
+  [keyboard.bindings.command]
+  program = "/opt/homebrew/bin/tmux"
+  args = [ "select-window", "-t", "8"]
+
+[[keyboard.bindings]]
+key = "Key9"
+mods = "Alt"
+  [keyboard.bindings.command]
+  program = "/opt/homebrew/bin/tmux"
+  args = [ "select-window", "-t", "9"]
+
+[[keyboard.bindings]]
+key = "Key0"
+mods = "Alt"
+  [keyboard.bindings.command]
+  program = "/opt/homebrew/bin/tmux"
+  args = [ "select-window", "-t", "0"]
