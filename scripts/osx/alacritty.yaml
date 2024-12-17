@@ -5,29 +5,20 @@
       - pkg-config
       - fontconfig
       - freetype
+      - scdoc
     state: present
 
 - name: Build alacritty with cargo
   shell: |
     source $HOME/.cargo/env
     cd /opt/alacritty
-    mkdir -p /tmp/alacritty
-    CARGO_TARGET_DIR=/tmp/alacritty cargo build --release
-    ls /tmp/alacritty
-
-- name: Move alacritty to location
-  become: yes
-  shell: |
-    mv /tmp/alacritty/release/alacritty /usr/local/bin/alacritty
+    make app
 
   # ----------- Create desktop entry -----------
 
-- name: Add Alacritty terminfo to the system
+- name: Copy app to Applications
   become: yes
   shell: |
-    tic -xe alacritty,alacritty-direct /opt/alacritty/extra/alacritty.info
+    cp -r /opt/alacritty/target/release/osx/Alacritty.app /Applications/
 
-- name: Install Alacritty desktop entry and icons for macOS
-  become: yes
-  shell: |
-    cp -r /opt/alacritty/extra/osx/Alacritty.app /Applications/
+
