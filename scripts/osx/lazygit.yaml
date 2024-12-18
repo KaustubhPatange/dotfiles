@@ -1,0 +1,4 @@
+- name: Install Lazygit
+  ansible.builtin.homebrew:
+    name: lazygit
+    state: present

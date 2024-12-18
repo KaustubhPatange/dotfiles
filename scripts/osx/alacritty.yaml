@@ -1,0 +1,24 @@
+- name: Install required alacritty dependencies
+  ansible.builtin.homebrew:
+    name:
+      - cmake
+      - pkg-config
+      - fontconfig
+      - freetype
+      - scdoc
+    state: present
+
+- name: Build alacritty with cargo
+  shell: |
+    source $HOME/.cargo/env
+    cd /opt/alacritty
+    make app
+
+  # ----------- Create desktop entry -----------
+
+- name: Copy app to Applications
+  become: yes
+  shell: |
+    cp -r /opt/alacritty/target/release/osx/Alacritty.app /Applications/
+
+

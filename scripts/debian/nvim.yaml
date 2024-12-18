@@ -10,14 +10,6 @@
       - build-essential
     state: present
 
-- name: Clone nvim repository
-  become: yes
-  ansible.builtin.git:
-    repo: https://github.com/neovim/neovim
-    dest: /tmp/neovim
-    depth: 1
-    version: "release-0.9"
-
 - name: Build nvim
   become: yes
   ansible.builtin.shell: |
