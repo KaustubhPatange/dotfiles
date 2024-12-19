@@ -7,6 +7,7 @@
       - cmake
       - unzip
       - curl
+      - ripgrep
       - build-essential
     state: present
 

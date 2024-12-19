@@ -22,4 +22,4 @@ Each task in the playbook is idempotent; for example, it ensures that the necess
 
 The following list will be updated based on any changes made in the playbook. Consider it as a release notes for latest version.
 
-**zsh, git, node18, python3, rust, zsh as default shell, oh-my-zsh, powerlevel10k + config, hack nerd fonts, alacritty + config, tmux + config, lazygit, neovim 0.9 + my config.**
+**zsh, git, node18, python3, rust, zsh as default shell, oh-my-zsh, powerlevel10k + config, hack nerd fonts, alacritty + config, tmux + config, lazygit, ripgrep, neovim 0.9 + my config.**
