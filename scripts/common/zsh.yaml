@@ -25,9 +25,13 @@
           fi
       }
 
+      # Always load $HOME/.zshrc.local if it exists
+      if [ -f $HOME/.zshrc.local ]; then
+          source $HOME/.zshrc.local
+      fi
       # If zsh shell started the directory where the
       # .zshrc.local is present load it directly
-      if [ -f .zshrc.local ]; then
+      if [ "$PWD" != "$HOME" ] && [ -f .zshrc.local ]; then
           source .zshrc.local
       fi
     state: present
