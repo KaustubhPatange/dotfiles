@@ -1,0 +1,15 @@
+- name: Tap the nikitabobko/tap repository
+  homebrew_tap:
+    name: nikitabobko/tap
+    state: present
+
+- name: Install Aerospace cask
+  homebrew:
+    name: aerospace@0.12.0
+    state: present
+
+- name: Copy Aerospace config
+  ansible.builtin.copy:
+    src: "configs/osx/aerospace.yaml"
+    dest: "~/.aerospace.yaml"
+    mode: '0664'

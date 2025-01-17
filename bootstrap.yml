@@ -256,7 +256,7 @@
       repo: https://github.com/neovim/neovim
       dest: /tmp/neovim
       depth: 1
-      version: "release-0.9"
+      version: "v0.9.5"
     when: nvim_check.rc != 0
 
   - name: Install nvim
@@ -296,3 +296,8 @@
   - name: Install lazygit
     include_tasks: "scripts/{{os_family}}/lazygit.yaml"
     when: lazygit_check.rc != 0
+
+  # ----------- Install Tiling window manager -----------
+
+  - name: Install nvim
+    include_tasks: "scripts/{{os_family}}/twm.yaml"
