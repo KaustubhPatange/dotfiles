@@ -256,7 +256,7 @@
       repo: https://github.com/neovim/neovim
       dest: /tmp/neovim
       depth: 1
-      version: "v0.9.5"
+      version: "v0.10.4"
     when: nvim_check.rc != 0
 
   - name: Install nvim
