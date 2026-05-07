@@ -10,6 +10,6 @@
 
 - name: Copy Aerospace config
   ansible.builtin.copy:
-    src: "configs/osx/aerospace.yaml"
-    dest: "~/.aerospace.yaml"
+    src: "configs/osx/aerospace.toml"
+    dest: "~/.aerospace.toml"
     mode: '0664'
