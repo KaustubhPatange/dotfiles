@@ -1,6 +1,6 @@
 # Kaustubh's dotfiles
 
-.files + programs for my day to day programming needs -- sensible defaults for Debian and macOS
+.files + programs for my day to day programming needs -- sensible defaults for Debian and macOS.
 
 ## Installation
 

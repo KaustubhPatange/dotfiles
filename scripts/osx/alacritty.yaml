@@ -11,7 +11,7 @@
 - name: Build alacritty with cargo
   shell: |
     source $HOME/.cargo/env
-    cd /opt/alacritty
+    cd /tmp/alacritty
     make app
 
   # ----------- Create desktop entry -----------
@@ -19,6 +19,6 @@
 - name: Copy app to Applications
   become: yes
   shell: |
-    cp -r /opt/alacritty/target/release/osx/Alacritty.app /Applications/
+    cp -r /tmp/alacritty/target/release/osx/Alacritty.app /Applications/
 
 

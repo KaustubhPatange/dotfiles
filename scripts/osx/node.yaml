@@ -1,7 +1,7 @@
-- name: Install Node.js 18
+- name: Install Node.js 22
   ansible.builtin.homebrew:
-    name: node@18
+    name: node@22
     state: present
 
-- name: Link Node.js 18
-  ansible.builtin.shell: brew link --overwrite --force node@18
+- name: Link Node.js 22
+  ansible.builtin.shell: brew link --overwrite --force node@22

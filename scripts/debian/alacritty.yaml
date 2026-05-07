@@ -15,14 +15,14 @@
   become: yes
   shell: |
     mkdir -p /usr/share/icons
-    cp /opt/alacritty/extra/logo/compat/alacritty-term.png /usr/share/icons/Alacritty.png
+    cp /tmp/alacritty/extra/logo/compat/alacritty-term.png /usr/share/icons/Alacritty.png
 
     . $HOME/.cargo/env
-    cd /opt/alacritty
-    mkdir -p /tmp/alacritty
-    CARGO_TARGET_DIR=/tmp/alacritty cargo build --release
-    ls /tmp/alacritty
-    mv /tmp/alacritty/release/alacritty /usr/local/bin/alacritty
+    cd /tmp/alacritty
+    mkdir -p /tmp/alacritty/rl
+    CARGO_TARGET_DIR=/tmp/alacritty/rl cargo build --release
+    ls /tmp/alacritty/rl
+    mv /tmp/alacritty/rl/release/alacritty /usr/local/bin/alacritty
 
   # ----------- Create desktop entry -----------
 

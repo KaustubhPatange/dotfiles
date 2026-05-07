@@ -115,14 +115,14 @@
   - name: Load custom zsh configurations
     include_tasks: "scripts/common/zsh.yaml"
 
-  # ----------- Install Node 18 -----------
+  # ----------- Install Node 22 -----------
 
   - name: Check node if already installed
     ansible.builtin.shell: which node
     register: node_check
     ignore_errors: true
 
-  - name: Install Node 18
+  - name: Install Node 22
     include_tasks: "scripts/{{os_family}}/node.yaml"
     when: node_check.rc != 0
 
@@ -189,10 +189,9 @@
     ignore_errors: true
 
   - name: Setup alacritty 0.14.0 repository
-    become: yes
     ansible.builtin.git:
       repo: https://github.com/alacritty/alacritty.git
-      dest: /opt/alacritty
+      dest: /tmp/alacritty
       depth: 1
       version: "d021a7b6"
     when: alacritty_check.rc != 0
@@ -299,5 +298,5 @@
 
   # ----------- Install Tiling window manager -----------
 
-  - name: Install nvim
+  - name: Install i3
     include_tasks: "scripts/{{os_family}}/twm.yaml"

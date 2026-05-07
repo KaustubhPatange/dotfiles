@@ -1,27 +1,21 @@
-- name: Check Xcode Command Line Tools
-  stat:
-    path: /usr/bin/xcode-select
-  register: xcode_check
+- name: Download neovim v0.11.0
+  ansible.builtin.get_url:
+    url: https://github.com/neovim/neovim/releases/download/v0.11.0/nvim-macos-arm64.tar.gz
+    dest: /tmp/nvim-macos-arm64.tar.gz
 
-- name: Install Xcode Command Line Tools
-  command: xcode-select --install
-  when: not xcode_check.stat.exists
+- name: Extract neovim tarball
+  ansible.builtin.shell: |
+    tar -xzf /tmp/nvim-macos-arm64.tar.gz -C /tmp/
 
-- name: Install required dependencies for nvim
-  ansible.builtin.homebrew:
-    name:
-      - ninja
-      - cmake
-      - gettext
-      - curl
-      - ripgrep
-    state: present
-
-- name: Build nvim
+- name: Move nvim to /usr/local
   become: yes
   ansible.builtin.shell: |
-    cd /tmp/neovim
-    make CMAKE_BUILD_TYPE=RelWithDebInfo
-    make install
+    cp -rX /tmp/nvim-macos-arm64/. /usr/local/
 
-    rm -rf /tmp/neovim
+- name: Cleanup nvim tarball
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /tmp/nvim-macos-arm64.tar.gz
+    - /tmp/nvim-macos-arm64

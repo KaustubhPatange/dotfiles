@@ -4,8 +4,8 @@
     state: present
 
 - name: Install Aerospace cask
-  homebrew:
-    name: aerospace@0.12.0
+  homebrew_cask:
+    name: aerospace
     state: present
 
 - name: Copy Aerospace config
