@@ -184,7 +184,7 @@
   # ----------- Setup Alacritty terminal -----------
 
   - name: Check alacritty if already installed
-    command: which alacritty
+    ansible.builtin.command: "{{ 'test -d /Applications/Alacritty.app' if os_family == 'osx' else 'which alacritty' }}"
     register: alacritty_check
     ignore_errors: true
 
