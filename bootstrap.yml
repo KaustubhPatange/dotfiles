@@ -278,6 +278,7 @@
       dest: ~/.config/nvim
       version: "master"
       update: true
+    ignore_errors: yes
 
   - name: Add mason bin to PATH
     ansible.builtin.lineinfile:
