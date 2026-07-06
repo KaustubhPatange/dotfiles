@@ -3,6 +3,10 @@
     name: nikitabobko/tap
     state: present
 
+- name: Trust the nikitabobko/tap tap
+  ansible.builtin.command: brew trust --tap nikitabobko/tap
+  changed_when: false
+
 - name: Install Aerospace cask
   homebrew_cask:
     name: aerospace
